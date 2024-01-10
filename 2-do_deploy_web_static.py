@@ -22,7 +22,7 @@ def do_pack():
 @task
 def do_deploy(archive_path):
     """deploy web_static to servers"""
-    env.hosts = ['35.153.79.242', '52.201.164.137']
+    env.hosts = ['100.24.206.77', '54.237.45.137']
     if not os.path.exists(archive_path):
         return False
     try:
