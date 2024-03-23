@@ -1,30 +1,35 @@
 #!/usr/bin/python3
-"""Starts a Flask web application"""
+"""List of states on HTML states_list"""
 
+from flask import Flask, render_template
 from models import storage
 from models.state import State
-from models.city import City
 from models.amenity import Amenity
-from flask import Flask
-from flask import render_template
+
 app = Flask(__name__)
 
 
 @app.route('/hbnb_filters', strict_slashes=False)
-def hbnb_filters():
-    """Returns a rendered html template,
-    using the web_static files
-    """
-    states = storage.all('State').values()
-    cities = storage.all('City').values()
-    amenities = storage.all('Amenity').values()
-    return render_template('10-hbnb_filters.html', **locals())
+def hbnb_filters(id=None):
+    """display a HTML page: (inside the tag BODY)"""
+    # sort states by name from a to z
+    slist = sorted(storage.all(
+        State).values(), key=lambda x: x.name)
+    for s in slist:
+        s.cities.sort(key=lambda x: x.name)
+
+    amenities_list = sorted(storage.all(
+        Amenity).values(), key=lambda x: x.name)
+    return render_template("10-hbnb_filters.html", sorted_states_list=slist,
+                           amenities_list=amenities_list)
 
 
 @app.teardown_appcontext
-def teardown(self):
-    """Removes the current SQLAlchemy Session"""
+def terminate(exc):
+    """close the storage"""
     storage.close()
 
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    """start the server"""
+    app.run(host='0.0.0.0', port=5000)
